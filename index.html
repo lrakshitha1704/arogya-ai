@@ -1,0 +1,1703 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Arogya AI — Disease Prediction System</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  /* ── TOKENS ────────────────────────────────────────────────── */
+  :root {
+    --blue-950: #040E24;
+    --blue-900: #081733;
+    --blue-800: #0C2347;
+    --blue-700: #103460;
+    --blue-600: #1A4F96;
+    --blue-500: #2563EB;
+    --blue-400: #4D87F5;
+    --blue-300: #93BBFA;
+    --blue-200: #C4D9FD;
+    --blue-100: #E8F1FE;
+    --blue-50:  #F0F6FF;
+
+    --green-900: #052E1A;
+    --green-800: #094D2B;
+    --green-700: #0D6E3C;
+    --green-600: #138A4C;
+    --green-500: #18A558;
+    --green-400: #34C470;
+    --green-300: #6EDB97;
+    --green-200: #A8EDBE;
+    --green-100: #D4F7E2;
+    --green-50:  #EDFAF3;
+
+    --teal-500: #0EA5B5;
+    --teal-100: #CFFAFE;
+
+    --neutral-950: #080C10;
+    --neutral-900: #0F141A;
+    --neutral-800: #1A2230;
+    --neutral-700: #263040;
+    --neutral-600: #3D4F66;
+    --neutral-500: #5C7085;
+    --neutral-400: #8299AF;
+    --neutral-300: #B0C0CE;
+    --neutral-200: #D5DFE8;
+    --neutral-100: #EBF0F5;
+    --neutral-50:  #F5F8FB;
+
+    --red-500: #E53E3E;
+    --red-100: #FEE2E2;
+    --amber-500: #D97706;
+    --amber-100: #FEF3C7;
+
+    --surface: #FFFFFF;
+    --surface-raised: #F7FAFD;
+    --surface-border: #E2EAF3;
+
+    --text-primary: #0D1826;
+    --text-secondary: #4A6078;
+    --text-tertiary: #8299AF;
+
+    --radius-sm: 6px;
+    --radius-md: 10px;
+    --radius-lg: 14px;
+    --radius-xl: 20px;
+    --radius-full: 999px;
+
+    --shadow-sm: 0 1px 3px rgba(10,40,80,0.07), 0 1px 2px rgba(10,40,80,0.04);
+    --shadow-md: 0 4px 12px rgba(10,40,80,0.10), 0 2px 4px rgba(10,40,80,0.06);
+    --shadow-lg: 0 8px 28px rgba(10,40,80,0.13), 0 4px 10px rgba(10,40,80,0.07);
+    --shadow-glow: 0 0 0 3px rgba(37,99,235,0.18);
+  }
+
+  /* ── RESET ─────────────────────────────────────────────────── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--neutral-50);
+    color: var(--text-primary);
+    font-size: 15px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── NAVBAR ────────────────────────────────────────────────── */
+  .nav {
+    position: sticky; top: 0; z-index: 200;
+    background: rgba(255,255,255,0.92);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--surface-border);
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 2rem; height: 60px;
+  }
+  .nav-logo {
+    display: flex; align-items: center; gap: 10px;
+    text-decoration: none;
+  }
+  .nav-logo-icon {
+    width: 34px; height: 34px; border-radius: var(--radius-md);
+    background: linear-gradient(135deg, var(--blue-500), var(--green-500));
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: var(--shadow-sm);
+  }
+  .nav-logo-icon svg { width: 18px; height: 18px; fill: none; stroke: #fff; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .nav-logo-text { font-size: 17px; font-weight: 600; color: var(--text-primary); font-family: 'Inter', sans-serif; }
+  .nav-logo-text span { color: var(--green-500); }
+  .nav-links { display: flex; align-items: center; gap: 4px; }
+  .nav-link {
+    padding: 6px 14px; border-radius: var(--radius-full); font-size: 13.5px;
+    font-weight: 500; color: var(--text-secondary); cursor: pointer;
+    transition: all 0.15s; border: none; background: none;
+  }
+  .nav-link:hover { background: var(--blue-50); color: var(--blue-600); }
+  .nav-link.active { background: var(--blue-100); color: var(--blue-600); }
+  .nav-cta {
+    background: linear-gradient(135deg, var(--blue-500), var(--green-500));
+    color: #fff; padding: 7px 18px; border-radius: var(--radius-full);
+    font-size: 13px; font-weight: 600; cursor: pointer;
+    border: none; box-shadow: var(--shadow-sm);
+    transition: opacity 0.15s, transform 0.12s;
+  }
+  .nav-cta:hover { opacity: 0.9; transform: translateY(-1px); }
+
+  /* ── HERO ──────────────────────────────────────────────────── */
+  .hero {
+    position: relative; overflow: hidden;
+    background: linear-gradient(140deg, var(--blue-900) 0%, var(--blue-700) 45%, var(--green-700) 100%);
+    padding: 72px 2rem 80px;
+    text-align: center;
+  }
+  .hero::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse 70% 60% at 50% 110%, rgba(24,165,88,0.35) 0%, transparent 70%),
+                radial-gradient(ellipse 50% 40% at 80% 20%, rgba(37,99,235,0.4) 0%, transparent 60%);
+    pointer-events: none;
+  }
+  .hero-eyebrow {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.2);
+    color: var(--green-200); font-size: 11px; font-weight: 600;
+    letter-spacing: 0.08em; text-transform: uppercase;
+    padding: 5px 14px; border-radius: var(--radius-full); margin-bottom: 20px;
+  }
+  .hero-eyebrow::before { content: '●'; color: var(--green-400); font-size: 8px; }
+  .hero h1 {
+    font-family: 'Inter', sans-serif; font-size: clamp(28px, 5vw, 46px);
+    font-weight: 700; color: #fff; line-height: 1.15;
+    margin-bottom: 16px; letter-spacing: -0.02em;
+  }
+  .hero h1 .accent { color: var(--green-300); }
+  .hero-sub {
+    font-size: 16px; color: rgba(255,255,255,0.68);
+    max-width: 480px; margin: 0 auto 32px; line-height: 1.65;
+  }
+  .hero-actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+  .btn-hero-primary {
+    background: linear-gradient(135deg, var(--green-500), var(--green-600));
+    color: #fff; padding: 12px 28px; border-radius: var(--radius-full);
+    font-size: 14px; font-weight: 600; cursor: pointer; border: none;
+    box-shadow: 0 4px 20px rgba(24,165,88,0.4);
+    transition: transform 0.12s, box-shadow 0.12s;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .btn-hero-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(24,165,88,0.45); }
+  .btn-hero-outline {
+    background: rgba(255,255,255,0.10); color: #fff;
+    border: 1px solid rgba(255,255,255,0.28); padding: 12px 28px;
+    border-radius: var(--radius-full); font-size: 14px; font-weight: 500;
+    cursor: pointer; transition: background 0.15s;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .btn-hero-outline:hover { background: rgba(255,255,255,0.18); }
+  .hero-stats {
+    display: flex; justify-content: center; gap: 40px; margin-top: 48px;
+    flex-wrap: wrap;
+  }
+  .hero-stat { text-align: center; }
+  .hero-stat-val { font-family: 'Inter', sans-serif; font-size: 26px; font-weight: 700; color: #fff; line-height: 1; }
+  .hero-stat-lbl { font-size: 12px; color: rgba(255,255,255,0.5); margin-top: 4px; }
+  .hero-divider { width: 1px; background: rgba(255,255,255,0.15); align-self: stretch; }
+
+  /* ── MAIN LAYOUT ───────────────────────────────────────────── */
+  .main { max-width: 820px; margin: 0 auto; padding: 0 1.5rem 4rem; }
+
+  /* ── TAB BAR ───────────────────────────────────────────────── */
+  .tab-bar {
+    display: flex; gap: 0;
+    background: var(--surface); border: 1px solid var(--surface-border);
+    border-radius: var(--radius-xl); padding: 5px;
+    margin: 2rem 0 1.5rem; box-shadow: var(--shadow-sm);
+  }
+  .tab-btn {
+    flex: 1; padding: 9px 16px; border: none; background: none;
+    border-radius: var(--radius-lg); font-size: 13.5px; font-weight: 500;
+    color: var(--text-secondary); cursor: pointer;
+    transition: all 0.18s; display: flex; align-items: center;
+    justify-content: center; gap: 7px;
+  }
+  .tab-btn:hover { color: var(--blue-600); background: var(--blue-50); }
+  .tab-btn.active {
+    background: linear-gradient(135deg, var(--blue-500), var(--green-500));
+    color: #fff; box-shadow: var(--shadow-md);
+  }
+  .tab-btn svg { width: 16px; height: 16px; flex-shrink: 0; }
+
+  /* ── SECTION PANELS ─────────────────────────────────────────── */
+  .panel { display: none; }
+  .panel.active { display: block; animation: fadeIn 0.15s ease; }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+  /* ── CARDS ──────────────────────────────────────────────────── */
+  .card {
+    background: var(--surface); border: 1px solid var(--surface-border);
+    border-radius: var(--radius-xl); padding: 1.5rem;
+    box-shadow: var(--shadow-sm); margin-bottom: 1rem;
+  }
+  .card-header { display: flex; align-items: center; gap: 10px; margin-bottom: 1.25rem; }
+  .card-icon {
+    width: 38px; height: 38px; border-radius: var(--radius-md);
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .card-icon.blue { background: var(--blue-100); }
+  .card-icon.green { background: var(--green-100); }
+  .card-icon svg { width: 20px; height: 20px; }
+  .card-title { font-size: 15px; font-weight: 600; color: var(--text-primary); font-family: 'Inter', sans-serif; }
+  .card-subtitle { font-size: 12px; color: var(--text-tertiary); margin-top: 1px; }
+
+  /* ── FORM ELEMENTS ──────────────────────────────────────────── */
+  .field { margin-bottom: 1rem; }
+  .field label { display: block; font-size: 12.5px; font-weight: 600; color: var(--text-secondary); margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.04em; }
+  .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  input[type="text"],
+  input[type="number"],
+  textarea,
+  select {
+    width: 100%; padding: 10px 14px;
+    background: var(--neutral-50); border: 1.5px solid var(--surface-border);
+    border-radius: var(--radius-md); font-size: 14px; font-family: 'DM Sans', sans-serif;
+    color: var(--text-primary); outline: none;
+    transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
+  }
+  input:focus, textarea:focus, select:focus {
+    background: #fff; border-color: var(--blue-400);
+    box-shadow: var(--shadow-glow);
+  }
+  textarea { resize: vertical; min-height: 90px; line-height: 1.55; }
+
+  /* ── PILLS ──────────────────────────────────────────────────── */
+  .pill-wrap { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+  .pill {
+    padding: 5px 12px; border-radius: var(--radius-full); font-size: 12px; font-weight: 500;
+    cursor: pointer; border: 1px solid var(--surface-border);
+    background: var(--surface); color: var(--text-secondary); transition: all 0.15s;
+    user-select: none;
+  }
+  .pill:hover { background: var(--blue-100); border-color: var(--blue-300); color: var(--blue-700); }
+
+  /* ── BUTTONS ────────────────────────────────────────────────── */
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center;
+    gap: 7px; padding: 10px 20px; border-radius: var(--radius-md);
+    font-size: 14px; font-weight: 600; font-family: 'DM Sans', sans-serif;
+    cursor: pointer; border: none; transition: all 0.15s; text-decoration: none;
+  }
+  .btn svg { width: 16px; height: 16px; flex-shrink: 0; }
+  .btn-primary {
+    background: linear-gradient(135deg, var(--blue-500), var(--green-500));
+    color: #fff; width: 100%; box-shadow: 0 2px 10px rgba(37,99,235,0.25);
+    padding: 12px 20px;
+  }
+  .btn-primary:hover { opacity: 0.93; transform: translateY(-1px); box-shadow: 0 4px 18px rgba(37,99,235,0.3); }
+  .btn-secondary {
+    background: var(--neutral-100); color: var(--text-secondary);
+    border: 1px solid var(--surface-border);
+  }
+  .btn-secondary:hover { background: var(--blue-50); color: var(--blue-600); border-color: var(--blue-200); }
+  .btn-danger {
+    background: linear-gradient(135deg, #C53030, var(--red-500));
+    color: #fff; width: 100%; box-shadow: 0 2px 10px rgba(197,48,48,0.3);
+  }
+  .btn-danger:hover { opacity: 0.9; transform: translateY(-1px); }
+  .btn-outline-green {
+    background: var(--green-50); color: var(--green-700);
+    border: 1px solid var(--green-200); flex: 1;
+  }
+  .btn-outline-green:hover { background: var(--green-100); }
+
+  /* ── RISK BADGES ─────────────────────────────────────────────── */
+  .badge {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 4px 10px; border-radius: var(--radius-full);
+    font-size: 11.5px; font-weight: 600;
+  }
+  .badge-low { background: var(--green-100); color: var(--green-800); }
+  .badge-medium { background: var(--amber-100); color: #7C4A00; }
+  .badge-high { background: var(--red-100); color: #7B1D1D; }
+  .badge-open { background: var(--green-100); color: var(--green-800); }
+  .badge-closed { background: var(--red-100); color: #7B1D1D; }
+  .badge-emergency { background: #FFF1F2; color: #9F1239; border: 1px solid #FECDD3; }
+  .badge-type { background: var(--blue-100); color: var(--blue-800); }
+  .badge-neutral { background: var(--neutral-100); color: var(--text-secondary); }
+
+  /* ── RESULT BOX ─────────────────────────────────────────────── */
+  .result-block {
+    background: var(--surface); border: 1px solid var(--surface-border);
+    border-radius: var(--radius-xl); padding: 1.5rem;
+    box-shadow: var(--shadow-md); margin-top: 1rem;
+  }
+  .result-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding-bottom: 1rem; margin-bottom: 1rem;
+    border-bottom: 1px solid var(--surface-border);
+  }
+  .result-title { font-size: 16px; font-weight: 600; font-family: 'Inter', sans-serif; }
+  .result-section { margin-bottom: 1.25rem; }
+  .result-section-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-tertiary); margin-bottom: 8px; }
+  .conditions-row { display: flex; flex-wrap: wrap; gap: 7px; }
+  .condition-chip {
+    background: var(--blue-50); border: 1px solid var(--blue-200);
+    color: var(--blue-700); padding: 5px 12px; border-radius: var(--radius-full); font-size: 13px; font-weight: 500;
+  }
+  .action-banner {
+    border-radius: var(--radius-lg); padding: 1rem 1.25rem; margin-bottom: 1.25rem;
+  }
+  .action-banner.low { background: var(--green-50); border: 1px solid var(--green-200); color: var(--green-800); }
+  .action-banner.medium { background: var(--amber-100); border: 1px solid #FDE68A; color: #78350F; }
+  .action-banner.high { background: var(--red-100); border: 1px solid #FECACA; color: #7F1D1D; }
+  .action-banner-label { font-size: 11.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 5px; opacity: 0.75; }
+  .action-banner-text { font-size: 14px; font-weight: 500; line-height: 1.5; }
+  .flags-row { display: flex; flex-wrap: wrap; gap: 6px; }
+  .flag-chip {
+    background: #FFF7ED; border: 1px solid #FED7AA;
+    color: #9A3412; padding: 4px 10px; border-radius: var(--radius-full); font-size: 12px;
+  }
+  .recommendation-box {
+    background: var(--neutral-50); border: 1px solid var(--surface-border);
+    border-radius: var(--radius-md); padding: 1rem;
+    font-size: 13.5px; color: var(--text-secondary); line-height: 1.6;
+  }
+  .result-actions { display: flex; gap: 10px; margin-top: 1rem; flex-wrap: wrap; }
+  .result-actions .btn { flex: 1; min-width: 140px; }
+
+  /* ── HOSPITAL FINDER ─────────────────────────────────────────── */
+  .location-search {
+    display: flex; gap: 10px;
+  }
+  .location-search input { flex: 1; }
+  .map-placeholder {
+    background: linear-gradient(135deg, var(--blue-50), var(--green-50));
+    border: 1.5px dashed var(--blue-200);
+    border-radius: var(--radius-lg); height: 140px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 8px; cursor: pointer; margin-bottom: 1rem; transition: all 0.15s;
+  }
+  .map-placeholder:hover { background: var(--blue-50); border-color: var(--blue-400); }
+  .map-icon { font-size: 32px; }
+  .map-label { font-size: 13px; font-weight: 500; color: var(--blue-600); }
+  .map-sub { font-size: 12px; color: var(--text-tertiary); }
+  .results-label {
+    font-size: 12px; font-weight: 600; color: var(--text-tertiary); text-transform: uppercase;
+    letter-spacing: 0.05em; margin-bottom: 0.75rem; display: flex; align-items: center; justify-content: space-between;
+  }
+  .hospital-card {
+    background: var(--surface); border: 1px solid var(--surface-border);
+    border-radius: var(--radius-xl); padding: 1.25rem; margin-bottom: 1rem;
+    box-shadow: var(--shadow-sm); transition: box-shadow 0.15s, border-color 0.15s;
+  }
+  .hospital-card:hover { box-shadow: var(--shadow-md); border-color: var(--blue-200); }
+  .hospital-top { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 0.75rem; }
+  .hospital-icon-wrap {
+    width: 44px; height: 44px; border-radius: var(--radius-md); flex-shrink: 0;
+    background: linear-gradient(135deg, var(--blue-100), var(--green-100));
+    display: flex; align-items: center; justify-content: center;
+  }
+  .hospital-icon-wrap svg { width: 22px; height: 22px; stroke: var(--blue-600); fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+  .hospital-meta { flex: 1; }
+  .hospital-name { font-size: 15px; font-weight: 600; font-family: 'Inter', sans-serif; margin-bottom: 3px; }
+  .hospital-address { font-size: 12.5px; color: var(--text-secondary); margin-bottom: 6px; display: flex; align-items: center; gap: 4px; }
+  .hospital-badges { display: flex; flex-wrap: wrap; gap: 5px; }
+  .hospital-rating { display: flex; align-items: center; gap: 4px; font-size: 12.5px; font-weight: 600; color: #B45309; }
+  .hospital-divider { height: 1px; background: var(--surface-border); margin: 0.75rem 0; }
+  .doctors-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-tertiary); margin-bottom: 8px; }
+  .doctor-card {
+    background: var(--surface-raised); border: 1px solid var(--surface-border);
+    border-radius: var(--radius-lg); padding: 1rem; margin-bottom: 8px;
+  }
+  .doctor-top { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+  .doc-avatar {
+    width: 36px; height: 36px; border-radius: 50%; flex-shrink: 0;
+    background: linear-gradient(135deg, var(--blue-200), var(--green-200));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12.5px; font-weight: 700; color: var(--blue-800);
+    font-family: 'Inter', sans-serif;
+  }
+  .doc-name { font-size: 13.5px; font-weight: 600; }
+  .doc-spec { font-size: 11.5px; color: var(--blue-600); font-weight: 500; }
+  .doc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5px 10px; }
+  .doc-item { display: flex; align-items: center; gap: 5px; font-size: 11.5px; color: var(--text-secondary); }
+  .doc-item svg { width: 13px; height: 13px; stroke: var(--text-tertiary); flex-shrink: 0; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .doc-actions { display: flex; gap: 8px; margin-top: 10px; }
+  .doc-actions .btn { flex: 1; font-size: 12px; padding: 7px 12px; }
+  .hospital-actions { display: flex; gap: 8px; margin-top: 10px; }
+  .hospital-actions .btn { font-size: 12px; padding: 7px 14px; }
+
+  /* ── FIRST AID ───────────────────────────────────────────────── */
+  .firstaid-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  @media (max-width: 560px) { .firstaid-grid { grid-template-columns: 1fr; } .field-row { grid-template-columns: 1fr; } }
+
+  /* ── MOBILE ──────────────────────────────────────────────────── */
+  @media (max-width: 640px) {
+    .nav { padding: 0 1rem; height: 54px; }
+    .nav-links { display: none; }              /* same 3 destinations already live in the tab bar below */
+    .nav-logo-text { font-size: 15px; }
+    .nav-cta { padding: 6px 14px; font-size: 12px; }
+    .hero { padding: 44px 1.25rem 56px; }
+    .hero-sub { font-size: 14px; max-width: 100%; }
+    .hero-actions { flex-direction: column; align-items: stretch; }
+    .hero-actions button { width: 100%; }
+    .hero-stats { gap: 20px 28px; margin-top: 36px; }
+    .hero-stat-val { font-size: 21px; }
+    .main { padding: 0 1rem 3rem; }
+    .tab-bar { margin: 1.5rem 0 1.25rem; }
+    .tab-btn { font-size: 11.5px; padding: 9px 6px; gap: 4px; }
+    .tab-btn svg { width: 14px; height: 14px; }
+    .card { padding: 1.1rem; }
+    .field-row { gap: 10px; }
+    .result-actions { flex-direction: column; }
+    .result-actions .btn { min-width: 0; }
+    .hospital-actions { flex-wrap: wrap; }
+    .doc-actions { flex-direction: column; }
+  }
+
+  @media (max-width: 380px) {
+    .tab-btn span, .tab-btn { font-size: 10.5px; }
+  }
+  .firstaid-card {
+    background: var(--surface); border: 1px solid var(--surface-border);
+    border-radius: var(--radius-xl); padding: 1.25rem;
+    box-shadow: var(--shadow-sm); transition: box-shadow 0.15s;
+  }
+  .firstaid-card:hover { box-shadow: var(--shadow-md); }
+  .fa-top { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+  .fa-icon {
+    width: 38px; height: 38px; border-radius: var(--radius-md); flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .fa-icon svg { width: 20px; height: 20px; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .fa-icon.high { background: var(--red-100); }
+  .fa-icon.high svg { stroke: #C53030; }
+  .fa-icon.medium { background: var(--amber-100); }
+  .fa-icon.medium svg { stroke: #B45309; }
+  .fa-icon.low { background: var(--green-100); }
+  .fa-icon.low svg { stroke: var(--green-700); }
+  .fa-title { font-size: 14px; font-weight: 600; font-family: 'Inter', sans-serif; }
+  .fa-steps { list-style: none; padding: 0; }
+  .fa-steps li {
+    font-size: 12.5px; color: var(--text-secondary); padding: 5px 0;
+    border-bottom: 1px solid var(--surface-border); display: flex; gap: 8px; align-items: flex-start; line-height: 1.5;
+  }
+  .fa-steps li:last-child { border-bottom: none; }
+  .fa-step-num {
+    width: 17px; height: 17px; border-radius: 50%;
+    background: var(--blue-100); color: var(--blue-700); font-size: 10px; font-weight: 700;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px;
+  }
+  .emergency-banner {
+    background: linear-gradient(135deg, var(--red-100), #FFF1F2);
+    border: 1px solid #FECACA; border-radius: var(--radius-lg);
+    padding: 0.85rem 1.25rem; margin-bottom: 1.25rem;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .emergency-banner svg { width: 20px; height: 20px; stroke: #C53030; fill: none; stroke-width: 2; flex-shrink: 0; }
+  .emergency-banner-text { font-size: 13px; color: #7F1D1D; font-weight: 500; }
+  .info-banner {
+    background: var(--blue-50); border: 1px solid var(--blue-200);
+    border-radius: var(--radius-lg); padding: 0.85rem 1.25rem; margin-bottom: 1.25rem;
+    display: flex; align-items: center; gap: 10px;
+    font-size: 12.5px; color: var(--blue-800);
+  }
+  .info-banner svg { width: 18px; height: 18px; stroke: var(--blue-500); fill: none; stroke-width: 2; flex-shrink: 0; }
+
+  /* ── LOADING ─────────────────────────────────────────────────── */
+  .loading-state { text-align: center; padding: 2.5rem 1rem; }
+  .spinner {
+    width: 36px; height: 36px; border-radius: 50%;
+    border: 3px solid var(--blue-100); border-top-color: var(--blue-500);
+    animation: spin 0.75s linear infinite; margin: 0 auto 12px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .loading-text { font-size: 13.5px; color: var(--text-secondary); font-weight: 500; }
+  .loading-sub { font-size: 12px; color: var(--text-tertiary); margin-top: 4px; }
+
+  /* ── EMPTY STATE ─────────────────────────────────────────────── */
+  .empty-state { text-align: center; padding: 3rem 1rem; }
+  .empty-icon {
+    width: 60px; height: 60px; border-radius: var(--radius-xl);
+    background: linear-gradient(135deg, var(--blue-50), var(--green-50));
+    border: 1px solid var(--surface-border);
+    display: flex; align-items: center; justify-content: center; margin: 0 auto 16px;
+  }
+  .empty-icon svg { width: 28px; height: 28px; stroke: var(--blue-400); fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+  .empty-title { font-size: 15px; font-weight: 600; margin-bottom: 6px; }
+  .empty-sub { font-size: 13px; color: var(--text-secondary); max-width: 280px; margin: 0 auto; }
+
+  /* ── FOOTER ──────────────────────────────────────────────────── */
+  .footer {
+    background: var(--blue-950); color: rgba(255,255,255,0.45);
+    text-align: center; padding: 2rem; font-size: 12.5px;
+  }
+  .footer span { color: rgba(255,255,255,0.7); }
+
+  /* ── DIVIDER ─────────────────────────────────────────────────── */
+  .section-divider { display: flex; align-items: center; gap: 12px; margin: 1.5rem 0 1rem; }
+  .section-divider::before, .section-divider::after { content: ''; flex: 1; height: 1px; background: var(--surface-border); }
+  .section-divider span { font-size: 11.5px; color: var(--text-tertiary); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; white-space: nowrap; }
+
+  /* ── BACK TO HOME ────────────────────────────────────────────── */
+  .back-home-btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: none; border: none; cursor: pointer;
+    font-size: 12.5px; font-weight: 600; color: var(--text-secondary);
+    padding: 1.25rem 0 0; font-family: inherit;
+  }
+  .back-home-btn:hover { color: var(--blue-600); }
+
+  /* ── AI DOCTOR CHAT ──────────────────────────────────────────── */
+  .chat-shell {
+    background: var(--surface); border: 1px solid var(--surface-border);
+    border-radius: var(--radius-xl); box-shadow: var(--shadow-sm);
+    display: flex; flex-direction: column; overflow: hidden;
+    height: min(640px, 72vh);
+  }
+  .chat-header {
+    display: flex; align-items: center; gap: 10px;
+    padding: 1rem 1.25rem; border-bottom: 1px solid var(--surface-border);
+    background: var(--surface-raised); flex-shrink: 0;
+  }
+  .chat-avatar {
+    width: 38px; height: 38px; border-radius: var(--radius-md); flex-shrink: 0;
+    background: linear-gradient(135deg, var(--blue-500), var(--green-500));
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: var(--shadow-sm);
+  }
+  .chat-avatar svg { width: 20px; height: 20px; stroke: #fff; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .chat-header-title { font-size: 14.5px; font-weight: 600; font-family: 'Inter', sans-serif; display: flex; align-items: center; gap: 7px; }
+  .chat-status-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--green-400); display: inline-block; box-shadow: 0 0 0 2px var(--green-100); }
+  .chat-header-sub { font-size: 11.5px; color: var(--text-tertiary); margin-top: 1px; }
+  .chat-header-actions { margin-left: auto; }
+  .chat-clear-btn {
+    background: none; border: 1px solid var(--surface-border); color: var(--text-tertiary);
+    font-size: 11px; font-weight: 600; padding: 5px 10px; border-radius: var(--radius-full);
+    cursor: pointer; transition: all 0.15s; font-family: inherit;
+  }
+  .chat-clear-btn:hover { color: var(--red-500); border-color: #FECACA; background: var(--red-100); }
+  .chat-disclaimer {
+    font-size: 11px; color: var(--text-tertiary); background: var(--blue-50);
+    border-bottom: 1px solid var(--surface-border); padding: 7px 1.25rem;
+    text-align: center; flex-shrink: 0; line-height: 1.5;
+  }
+  .chat-log {
+    flex: 1; overflow-y: auto; padding: 1.1rem; display: flex;
+    flex-direction: column; gap: 14px; background: var(--neutral-50);
+  }
+  .chat-row { display: flex; gap: 9px; max-width: 92%; }
+  .chat-row.user { align-self: flex-end; flex-direction: row-reverse; }
+  .chat-row.bot { align-self: flex-start; }
+  .chat-bubble-avatar {
+    width: 28px; height: 28px; border-radius: 50%; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; margin-top: 1px;
+  }
+  .chat-row.bot .chat-bubble-avatar { background: linear-gradient(135deg, var(--blue-500), var(--green-500)); }
+  .chat-row.bot .chat-bubble-avatar svg { width: 14px; height: 14px; stroke: #fff; fill: none; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+  .chat-row.user .chat-bubble-avatar { background: var(--neutral-200); color: var(--text-secondary); font-weight: 700; font-family: 'Inter', sans-serif; }
+  .chat-bubble {
+    padding: 10px 14px; border-radius: var(--radius-lg);
+    font-size: 13.5px; line-height: 1.55; white-space: pre-wrap; word-break: break-word;
+  }
+  .chat-row.bot .chat-bubble {
+    background: var(--surface); border: 1px solid var(--surface-border);
+    color: var(--text-primary); border-top-left-radius: 4px;
+    box-shadow: var(--shadow-sm);
+  }
+  .chat-row.user .chat-bubble {
+    background: linear-gradient(135deg, var(--blue-500), var(--green-600));
+    color: #fff; border-top-right-radius: 4px;
+  }
+  .chat-row.bot .chat-bubble.error {
+    background: var(--red-100); border-color: #FECACA; color: #7F1D1D;
+  }
+  .chat-bubble strong { font-weight: 700; }
+  .chat-typing { display: flex; gap: 4px; padding: 4px 2px; align-items: center; }
+  .chat-typing span {
+    width: 6px; height: 6px; border-radius: 50%; background: var(--blue-300);
+    animation: chatBounce 1.1s infinite ease-in-out;
+  }
+  .chat-typing span:nth-child(2) { animation-delay: 0.15s; }
+  .chat-typing span:nth-child(3) { animation-delay: 0.3s; }
+  @keyframes chatBounce { 0%, 60%, 100% { transform: translateY(0); opacity: 0.5; } 30% { transform: translateY(-4px); opacity: 1; } }
+  .chat-suggestions { display: flex; flex-wrap: wrap; gap: 6px; padding: 0 1.1rem 0.9rem; background: var(--neutral-50); flex-shrink: 0; }
+  .chat-input-bar {
+    display: flex; gap: 8px; align-items: flex-end;
+    padding: 0.85rem 1rem; border-top: 1px solid var(--surface-border);
+    background: var(--surface); flex-shrink: 0;
+  }
+  .chat-input-bar textarea {
+    flex: 1; resize: none; min-height: 40px; max-height: 110px;
+    padding: 9px 14px; font-size: 13.5px; line-height: 1.5; border-radius: var(--radius-lg);
+  }
+  .chat-send-btn {
+    width: 40px; height: 40px; border-radius: 50%; flex-shrink: 0; border: none; cursor: pointer;
+    background: linear-gradient(135deg, var(--blue-500), var(--green-500));
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: var(--shadow-sm); transition: opacity 0.15s, transform 0.12s;
+  }
+  .chat-send-btn:hover:not(:disabled) { transform: translateY(-1px); opacity: 0.92; }
+  .chat-send-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+  .chat-send-btn svg { width: 17px; height: 17px; stroke: #fff; fill: none; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+  @media (max-width: 640px) {
+    .chat-shell { height: min(560px, 70vh); }
+    .chat-row { max-width: 96%; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <a class="nav-logo" href="javascript:void(0)" onclick="goHome()">
+    <div class="nav-logo-icon">
+      <svg viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+    </div>
+    <span class="nav-logo-text">Arogya <span>AI</span></span>
+  </a>
+  <div class="nav-links">
+    <button class="nav-link active" id="navbtn-symptom" onclick="switchTab('symptom')">Symptom Check</button>
+    <button class="nav-link" id="navbtn-chat" onclick="switchTab('chat')">AI Doctor Chat</button>
+    <button class="nav-link" id="navbtn-hospitals" onclick="switchTab('hospitals')">Find Hospitals</button>
+    <button class="nav-link" id="navbtn-firstaid" onclick="switchTab('firstaid')">First Aid</button>
+  </div>
+  <button class="nav-cta" onclick="switchTab('symptom')">Get started →</button>
+</nav>
+
+<!-- SCREEN 1: LANDING -->
+<div id="screen-landing">
+<section class="hero">
+  <div class="hero-eyebrow">Healthcare AI · Tamil Nadu</div>
+  <h1>வணக்கம்! Your <span class="accent">AI health</span><br>companion is here</h1>
+  <p class="hero-sub">Describe your symptoms in natural language. Get instant triage, risk assessment, and connect with nearby doctors — in seconds.</p>
+  <div class="hero-actions">
+    <button class="btn-hero-primary" onclick="switchTab('symptom')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+      Check symptoms now
+    </button>
+    <button class="btn-hero-outline" onclick="switchTab('hospitals')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.85)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 12h6M12 9v6"/></svg>
+      Find hospitals near me
+    </button>
+    <button class="btn-hero-outline" onclick="switchTab('chat')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.85)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg>
+      Chat with AI Doctor
+    </button>
+  </div>
+  <div class="hero-stats">
+    <div class="hero-stat"><div class="hero-stat-val">98.2%</div><div class="hero-stat-lbl">Model accuracy</div></div>
+    <div class="hero-divider"></div>
+    <div class="hero-stat"><div class="hero-stat-val">42</div><div class="hero-stat-lbl">Disease classes</div></div>
+    <div class="hero-divider"></div>
+    <div class="hero-stat"><div class="hero-stat-val">24/7</div><div class="hero-stat-lbl">AI availability</div></div>
+    <div class="hero-divider"></div>
+    <div class="hero-stat"><div class="hero-stat-val">108</div><div class="hero-stat-lbl">Emergency ready</div></div>
+  </div>
+</section>
+</div><!-- /screen-landing -->
+
+<!-- SCREEN 2: APP -->
+<div id="screen-app" style="display:none">
+<div class="main">
+
+  <!-- BACK TO HOME -->
+  <button class="back-home-btn" onclick="goHome()">
+    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+    Back to home
+  </button>
+
+  <!-- TAB BAR -->
+  <div class="tab-bar" role="tablist">
+    <button class="tab-btn active" id="tab-symptom" role="tab" onclick="switchTab('symptom')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+      Symptom Checker
+    </button>
+    <button class="tab-btn" id="tab-hospitals" role="tab" onclick="switchTab('hospitals')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9,22 9,12 15,12 15,22"/></svg>
+      Nearby Hospitals
+    </button>
+    <button class="tab-btn" id="tab-chat" role="tab" onclick="switchTab('chat')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg>
+      AI Doctor Chat
+    </button>
+    <button class="tab-btn" id="tab-firstaid" role="tab" onclick="switchTab('firstaid')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M12 8v8M8 12h8"/></svg>
+      First Aid Guide
+    </button>
+  </div>
+
+  <!-- PANEL: SYMPTOM CHECKER -->
+  <div class="panel active" id="panel-symptom" role="tabpanel">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon green">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#0D6E3C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+        </div>
+        <div>
+          <div class="card-title">Describe your symptoms</div>
+          <div class="card-subtitle">AI uses NLP to map your words to clinical parameters</div>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>What are the problems?</label>
+        <textarea id="symptom-input" placeholder='Type freely — e.g. "my head is spinning and I have fever for 3 days"'></textarea>
+        <div class="pill-wrap" id="symptom-pills"></div>
+      </div>
+
+      <div class="field-row">
+        <div class="field">
+          <label>How long?</label>
+          <select id="duration">
+            <option>Less than 1 day</option>
+            <option>1–3 days</option>
+            <option>3–7 days</option>
+            <option>More than 7 days</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Patient age</label>
+          <input type="number" id="age" placeholder="e.g. 34" min="1" max="120">
+        </div>
+      </div>
+
+      <button class="btn btn-primary" onclick="analyzeSymptoms()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/><path d="M11 8v6M8 11h6"/></svg>
+        Analyze symptoms
+      </button>
+    </div>
+    <div id="symptom-result"></div>
+  </div>
+
+  <!-- PANEL: AI DOCTOR CHAT -->
+  <div class="panel" id="panel-chat" role="tabpanel">
+    <div class="chat-shell">
+      <div class="chat-header">
+        <div class="chat-avatar">
+          <svg viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg>
+        </div>
+        <div>
+          <div class="chat-header-title"><span class="chat-status-dot"></span>AI Doctor Chat</div>
+          <div class="chat-header-sub">Ask follow-up questions in plain language · powered by Claude</div>
+        </div>
+        <div class="chat-header-actions">
+          <button class="chat-clear-btn" onclick="clearChat()">Clear chat</button>
+        </div>
+      </div>
+      <div class="chat-disclaimer">⚠️ AI-generated guidance, not a medical diagnosis. For emergencies, call 108 or visit the ER immediately.</div>
+      <div class="chat-log" id="chat-log"></div>
+      <div class="chat-suggestions" id="chat-suggestions"></div>
+      <div class="chat-input-bar">
+        <textarea id="chat-input" placeholder="Describe how you're feeling, or ask a health question…" rows="1" onkeydown="handleChatKeydown(event)" oninput="autoGrowChatInput(this)"></textarea>
+        <button class="chat-send-btn" id="chat-send-btn" onclick="sendChatMessage()">
+          <svg viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- PANEL: HOSPITALS -->
+  <div class="panel" id="panel-hospitals" role="tabpanel">
+    <div class="card" id="usual-hospital-card">
+      <div class="card-header">
+        <div class="card-icon blue">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#1A4F96" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+        </div>
+        <div>
+          <div class="card-title">Your usual hospital</div>
+          <div class="card-subtitle">Save the one you visit normally for one-tap access</div>
+        </div>
+      </div>
+      <div id="usual-hospital-body"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon blue">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#1A4F96" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        </div>
+        <div>
+          <div class="card-title">Find hospitals & doctors</div>
+          <div class="card-subtitle">Search by location — AI finds real nearby facilities</div>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Your location</label>
+        <div class="location-search">
+          <input type="text" id="location-input" placeholder="e.g. Anna Nagar, Chennai  or  Srīperumbūdūr, Tamil Nadu">
+          <button class="btn btn-primary" style="width:auto;padding:10px 20px;" onclick="findHospitals()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+            Search
+          </button>
+        </div>
+      </div>
+
+      <div class="field-row" style="margin-bottom:0">
+        <div class="field" style="margin-bottom:0">
+          <label>Specialty filter</label>
+          <select id="specialty-filter">
+            <option value="">All specialties</option>
+            <option>General Medicine</option>
+            <option>Emergency / Trauma</option>
+            <option>Cardiology</option>
+            <option>Pediatrics</option>
+            <option>Neurology</option>
+            <option>Orthopedics</option>
+          </select>
+        </div>
+        <div class="field" style="margin-bottom:0;display:flex;align-items:flex-end">
+          <button class="btn btn-secondary" style="width:100%;padding:10px 14px" onclick="useCurrentLocation()">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/><line x1="12" y1="2" x2="12" y2="5"/><line x1="12" y1="19" x2="12" y2="22"/><line x1="2" y1="12" x2="5" y2="12"/><line x1="19" y1="12" x2="22" y2="12"/></svg>
+            Use my location
+          </button>
+        </div>
+      </div>
+    </div>
+    <div id="hospital-result">
+      <div class="empty-state">
+        <div class="empty-icon">
+          <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9,22 9,12 15,12 15,22"/></svg>
+        </div>
+        <div class="empty-title">No search yet</div>
+        <div class="empty-sub">Enter your location above to find hospitals, clinics, and available doctors nearby.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PANEL: FIRST AID -->
+  <div class="panel" id="panel-firstaid" role="tabpanel">
+    <div class="emergency-banner">
+      <svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      <div class="emergency-banner-text">For life-threatening emergencies, call <strong>108</strong> immediately. This guide covers initial first response only.</div>
+    </div>
+    <div class="firstaid-grid" id="firstaid-grid"></div>
+  </div>
+
+</div><!-- /main -->
+
+<footer class="footer">
+  <span>Arogya AI</span> · AI-powered triage for a healthier India · Not a substitute for professional medical advice
+</footer>
+</div><!-- /screen-app -->
+
+<script>
+/* ═══════════════════════════════════════════════════
+   DATA
+════════════════════════════════════════════════════ */
+const SYMPTOM_PILLS = ['Fever','Headache','Chest pain','Shortness of breath','Vomiting','Abdominal pain','Dizziness','Weakness','Bleeding','Back pain','Cough'];
+
+const FIRSTAID = [
+  { severity:'high', title:'Bleeding', icon:'bleeding',
+    steps:['Apply firm direct pressure with a clean cloth','Secure with a tight bandage, elevate the limb','Do not remove cloth — add more if soaking through','Call 108 if bleeding is uncontrollable'] },
+  { severity:'high', title:'Chest pain', icon:'heart',
+    steps:['Call 108 immediately','Have the person sit upright and stay still','Loosen all tight clothing','Do not give food or water — wait for paramedics'] },
+  { severity:'high', title:'Difficulty breathing', icon:'lungs',
+    steps:['Call emergency services immediately','Help the person sit upright','Loosen clothing around neck and chest','If they have an inhaler, assist them in using it'] },
+  { severity:'medium', title:'Burns', icon:'fire',
+    steps:['Run cool (not cold) tap water for 20 minutes','Cover loosely with sterile cling film','Do not apply ice, butter, or toothpaste','Seek care for burns larger than a palm'] },
+  { severity:'medium', title:'High fever (>103°F)', icon:'thermometer',
+    steps:['Apply cool damp cloth to forehead and neck','Give age-appropriate paracetamol (check dose)','Keep the person hydrated with clear fluids','See a doctor if fever lasts more than 3 days'] },
+  { severity:'low', title:'Vomiting', icon:'drop',
+    steps:['Stop all solid foods temporarily','Give small sips of ORS or clear fluids','Rest in an upright or recovery position','See doctor if vomiting persists over 24 hours'] },
+];
+
+/* Rule-based symptom knowledge base — runs fully in-browser, no API needed.
+   Each category: keywords to match, possible conditions, red flags to watch,
+   a base risk (0=low,1=medium,2=high), and an optional interactive follow-up
+   yes/no question that can push the risk higher. */
+const SYMPTOM_KB = [
+  { title:'Fever', keywords:['fever','temperature','chills','feverish','hot body'],
+    conditions:['Viral fever','Flu','Dengue'],
+    redFlags:['Fever above 103°F (39.4°C)','Fever lasting more than 5 days','Rash appearing with fever'],
+    base:1,
+    followUp:{ q:'Do you also have a skin rash, unusual bruising, or bleeding gums?', delta:1 } },
+  { title:'Headache', keywords:['headache','migraine','head pain','head ache'],
+    conditions:['Tension headache','Migraine','Sinusitis'],
+    redFlags:['Sudden "worst-ever" headache','Headache with a stiff neck','Headache with vision changes'],
+    base:0,
+    followUp:{ q:'Is this the worst headache you\'ve ever had, or does your neck feel stiff?', delta:2 } },
+  { title:'Cough & cold', keywords:['cough','cold','sore throat','runny nose','congestion','sneezing'],
+    conditions:['Common cold','Upper respiratory infection','Allergic rhinitis'],
+    redFlags:['Coughing up blood','Cough lasting more than 3 weeks','High fever alongside cough'],
+    base:0,
+    followUp:{ q:'Are you coughing up blood, or having real trouble breathing?', delta:2 } },
+  { title:'Chest pain', keywords:['chest pain','chest tightness','chest pressure','heart pain'],
+    conditions:['Musculoskeletal pain','Acid reflux','Possible cardiac issue'],
+    redFlags:['Crushing or squeezing pain','Pain spreading to arm, neck or jaw','Chest pain with sweating or breathlessness'],
+    base:1,
+    followUp:{ q:'Is the pain crushing/severe, spreading to your arm or jaw, or are you sweating and breathless?', delta:2 } },
+  { title:'Breathing difficulty', keywords:['shortness of breath','difficulty breathing','breathless','trouble breathing','wheezing',"can't breathe","cant breathe"],
+    conditions:['Asthma flare-up','Respiratory infection','Possible respiratory emergency'],
+    redFlags:['Severe breathlessness at rest','Blue tinge on lips or fingertips','Breathlessness with chest pain'],
+    base:1,
+    followUp:{ q:'Are your lips or fingertips turning blue, or can you barely speak full sentences?', delta:2 } },
+  { title:'Abdominal pain', keywords:['stomach pain','abdominal pain','belly pain','stomach ache','tummy pain'],
+    conditions:['Gastritis','Indigestion','Possible appendicitis'],
+    redFlags:['Severe pain in lower-right abdomen','Hard, rigid abdomen','Pain with persistent vomiting'],
+    base:0,
+    followUp:{ q:'Is the pain concentrated in the lower-right side of your belly, or is your abdomen hard and rigid?', delta:2 } },
+  { title:'Vomiting & diarrhea', keywords:['vomiting','vomit','diarrhea','loose motion','nausea'],
+    conditions:['Gastroenteritis','Food poisoning','Viral stomach infection'],
+    redFlags:['Signs of dehydration (dizzy, dry mouth)','Blood in vomit or stool','Vomiting for over 24 hours'],
+    base:0,
+    followUp:{ q:'Do you see blood in the vomit or stool, or feel very dizzy / dehydrated?', delta:2 } },
+  { title:'Dizziness', keywords:['dizziness','dizzy','fainting','fainted','lightheaded','vertigo'],
+    conditions:['Low blood pressure','Dehydration','Inner-ear (vertigo) issue'],
+    redFlags:['Fainting with chest pain','Slurred speech or one-sided weakness','Repeated fainting episodes'],
+    base:0,
+    followUp:{ q:'Did you faint completely, or notice slurred speech or weakness on one side of the body?', delta:2 } },
+  { title:'Weakness & fatigue', keywords:['weakness','fatigue','tired','no energy','exhausted'],
+    conditions:['Anemia','Viral illness','Stress-related fatigue'],
+    redFlags:['Sudden weakness on one side of the face or body','Weakness with difficulty speaking','Severe unexplained weight loss'],
+    base:0,
+    followUp:{ q:'Is the weakness sudden, on one side of your face/body, or affecting your speech?', delta:2 } },
+  { title:'Bleeding / injury', keywords:['bleeding','blood loss','deep cut','open wound'],
+    conditions:['Minor laceration','Significant blood loss needing care'],
+    redFlags:['Bleeding that won\'t stop with pressure','Large or deep wound','Pale, clammy skin with rapid pulse'],
+    base:1,
+    followUp:{ q:'Is the bleeding heavy and not stopping with firm pressure?', delta:2 } },
+  { title:'Back pain', keywords:['back pain','backache'],
+    conditions:['Muscular strain','Sciatica','Kidney-related pain'],
+    redFlags:['Loss of bladder or bowel control','Numbness running down the legs','Back pain after major trauma'],
+    base:0,
+    followUp:{ q:'Any numbness in your legs, or loss of bladder/bowel control?', delta:2 } },
+  { title:'Skin / allergic reaction', keywords:['rash','itching','swelling','allergic','hives'],
+    conditions:['Allergic reaction','Skin infection','Contact dermatitis'],
+    redFlags:['Swelling of face, lips or throat','Breathlessness alongside rash','Rapidly spreading rash with fever'],
+    base:0,
+    followUp:{ q:'Is your face, lips, or throat swelling up, or do you feel breathless?', delta:2 } },
+];
+
+const EMERGENCY_KEYWORDS = ['not breathing','stopped breathing','unconscious','unresponsive','choking','seizure','fitting now'];
+const MENTAL_HEALTH_KEYWORDS = ['suicidal','want to die','kill myself','end my life','self harm','hurt myself','no reason to live'];
+
+function escapeHtml(str) {
+  return String(str).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+const ICON_PATHS = {
+  bleeding: '<circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/>',
+  heart: '<path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/>',
+  lungs: '<path d="M12 5v14M6 9a6 6 0 006 6 6 6 0 006-6V5"/><path d="M6 9H3a2 2 0 00-2 2v4a2 2 0 002 2h3M18 9h3a2 2 0 012 2v4a2 2 0 01-2 2h-3"/>',
+  fire: '<path d="M8.5 14.5A2.5 2.5 0 0011 17c1.38 0 2.5-1.12 2.5-2.5 0-1.5-1-2.5-2.5-5-1.5 2.5-2.5 3.5-2.5 5z"/><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/>',
+  thermometer: '<path d="M14 14.76V3.5a2.5 2.5 0 00-5 0v11.26a4.5 4.5 0 105 0z"/>',
+  drop: '<path d="M12 2.69l5.66 5.66a8 8 0 11-11.31 0z"/>',
+};
+
+/* ═══════════════════════════════════════════════════
+   INIT
+════════════════════════════════════════════════════ */
+document.getElementById('symptom-pills').innerHTML = SYMPTOM_PILLS.map(s =>
+  `<span class="pill" onclick="addSymptom('${s}')">${s}</span>`
+).join('');
+
+document.getElementById('firstaid-grid').innerHTML = FIRSTAID.map(f => `
+  <div class="firstaid-card">
+    <div class="fa-top">
+      <div class="fa-icon ${f.severity}">
+        <svg viewBox="0 0 24 24">${ICON_PATHS[f.icon]}</svg>
+      </div>
+      <div>
+        <div class="fa-title">${f.title}</div>
+        <span class="badge badge-${f.severity}">${f.severity === 'high' ? '🔴 Critical' : f.severity === 'medium' ? '🟡 Moderate' : '🟢 Mild'}</span>
+      </div>
+    </div>
+    <ol class="fa-steps">
+      ${f.steps.map((s,i) => `<li><span class="fa-step-num">${i+1}</span><span>${s}</span></li>`).join('')}
+    </ol>
+  </div>
+`).join('');
+
+renderUsualHospital();
+
+/* ═══════════════════════════════════════════════════
+   TAB SWITCHING
+════════════════════════════════════════════════════ */
+function showApp() {
+  document.getElementById('screen-landing').style.display = 'none';
+  document.getElementById('screen-app').style.display = 'block';
+  window.scrollTo(0, 0);
+}
+
+function goHome() {
+  document.getElementById('screen-app').style.display = 'none';
+  document.getElementById('screen-landing').style.display = '';
+  window.scrollTo(0, 0);
+}
+
+function switchTab(name) {
+  showApp();
+  ['symptom','chat','hospitals','firstaid'].forEach(t => {
+    document.getElementById('panel-' + t).classList.toggle('active', t === name);
+    document.getElementById('tab-' + t).classList.toggle('active', t === name);
+    document.getElementById('navbtn-' + t).classList.toggle('active', t === name);
+  });
+  if (name === 'chat') setTimeout(() => document.getElementById('chat-input').focus(), 50);
+}
+
+/* ═══════════════════════════════════════════════════
+   SYMPTOM CHECKER
+════════════════════════════════════════════════════ */
+function addSymptom(s) {
+  const el = document.getElementById('symptom-input');
+  el.value = (el.value.trim() ? el.value.trim() + ', ' : '') + s;
+  el.focus();
+}
+
+let currentAnalysis = null;
+
+function analyzeSymptoms() {
+  const symptomsRaw = document.getElementById('symptom-input').value.trim();
+  const duration = document.getElementById('duration').value;
+  const age = document.getElementById('age').value;
+  if (!symptomsRaw) { alert('Please describe at least one symptom.'); return; }
+
+  const text = symptomsRaw.toLowerCase();
+  const res = document.getElementById('symptom-result');
+  res.innerHTML = `
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <div class="loading-text">Analyzing your symptoms…</div>
+      <div class="loading-sub">Matching against clinical patterns</div>
+    </div>`;
+
+  // brief pause purely for a natural "thinking" feel — all matching happens locally, no network call
+  setTimeout(() => {
+    if (MENTAL_HEALTH_KEYWORDS.some(k => text.includes(k))) { renderMentalHealthSupport(); return; }
+    if (EMERGENCY_KEYWORDS.some(k => text.includes(k))) { renderEmergencyResult(); return; }
+
+    const matched = SYMPTOM_KB.filter(cat => cat.keywords.some(k => text.includes(k)));
+    if (!matched.length) { renderNoMatch(symptomsRaw); return; }
+
+    currentAnalysis = { matched, duration, age, raw: symptomsRaw, answers: [], pendingIndex: 0 };
+    renderNextFollowUp();
+  }, 450);
+}
+
+function renderNextFollowUp() {
+  const withFollowUp = currentAnalysis.matched.filter(c => c.followUp);
+  if (currentAnalysis.pendingIndex >= withFollowUp.length) { renderFinalResult(); return; }
+  const cat = withFollowUp[currentAnalysis.pendingIndex];
+  const res = document.getElementById('symptom-result');
+  res.innerHTML = `
+    <div class="result-block">
+      <div class="result-header">
+        <div class="result-title">Quick check (${currentAnalysis.pendingIndex + 1} of ${withFollowUp.length})</div>
+        <span class="badge badge-medium">Interactive triage</span>
+      </div>
+      <div class="result-section" style="margin-bottom:0">
+        <div class="result-section-label">${escapeHtml(cat.title)}</div>
+        <div style="font-size:14.5px;color:var(--text-primary);line-height:1.6;margin-bottom:1rem">${escapeHtml(cat.followUp.q)}</div>
+        <div style="display:flex;gap:10px">
+          <button class="btn btn-danger" style="flex:1" onclick="answerFollowUp(true)">Yes</button>
+          <button class="btn btn-secondary" style="flex:1" onclick="answerFollowUp(false)">No</button>
+        </div>
+      </div>
+    </div>`;
+}
+
+function answerFollowUp(val) {
+  const withFollowUp = currentAnalysis.matched.filter(c => c.followUp);
+  const cat = withFollowUp[currentAnalysis.pendingIndex];
+  currentAnalysis.answers.push({ cat, val });
+  currentAnalysis.pendingIndex++;
+  renderNextFollowUp();
+}
+
+function renderFinalResult() {
+  const { matched, duration, age, answers, raw } = currentAnalysis;
+  let riskScore = matched.reduce((max, c) => Math.max(max, c.base), 0);
+  const redFlags = new Set();
+  const conditions = new Set();
+  matched.forEach(c => { c.conditions.forEach(x => conditions.add(x)); c.redFlags.forEach(x => redFlags.add(x)); });
+  answers.forEach(a => { if (a.val) riskScore += (a.cat.followUp.delta || 1); });
+  if (duration === 'More than 7 days') riskScore += 0.5;
+  const ageNum = parseInt(age, 10);
+  if (!isNaN(ageNum) && (ageNum < 2 || ageNum > 65) && riskScore >= 1) riskScore += 0.5;
+
+  let rl = 'low';
+  if (riskScore >= 2) rl = 'high'; else if (riskScore >= 1) rl = 'medium';
+
+  const conditionsArr = Array.from(conditions).slice(0, 4);
+  const redFlagsArr = Array.from(redFlags).slice(0, 4);
+  const flaggedYes = answers.some(a => a.val);
+
+  const immediateAction = rl === 'high'
+    ? 'Seek medical attention right away — visit the nearest emergency department or call 108.'
+    : rl === 'medium'
+    ? 'Monitor closely and arrange to see a doctor within 24 hours, sooner if symptoms worsen.'
+    : 'Rest, stay hydrated, and monitor your symptoms. See a doctor if things don\'t improve in a few days.';
+
+  const riskReason = rl === 'high'
+    ? (flaggedYes
+        ? 'One of your follow-up answers matched a pattern that can indicate a serious condition needing prompt evaluation.'
+        : 'The symptoms you described match a pattern that can indicate a serious condition needing prompt evaluation.')
+    : rl === 'medium'
+    ? 'Your symptoms warrant attention but don\'t currently show clear signs of an emergency.'
+    : 'Based on what you\'ve described, this looks like a common, manageable condition.';
+
+  const recommendation = `Based on "${escapeHtml(raw)}"${duration ? ' (' + escapeHtml(duration) + ')' : ''}, consider seeing a ${rl === 'high' ? 'doctor immediately or visiting the ER' : 'general physician'}. Keep track of any new or worsening symptoms and mention them during your consultation.`;
+
+  const res = document.getElementById('symptom-result');
+  res.innerHTML = `
+    <div class="result-block">
+      <div class="result-header">
+        <div class="result-title">Analysis result</div>
+        <span class="badge badge-${rl}">${rl === 'high' ? '🔴 HIGH RISK' : rl === 'medium' ? '🟡 MEDIUM RISK' : '🟢 LOW RISK'}</span>
+      </div>
+
+      <div class="result-section">
+        <div class="result-section-label">Possible conditions</div>
+        <div class="conditions-row">${conditionsArr.map(c => `<span class="condition-chip">${escapeHtml(c)}</span>`).join('')}</div>
+      </div>
+
+      <div class="action-banner ${rl}">
+        <div class="action-banner-label">⚡ Immediate action</div>
+        <div class="action-banner-text">${immediateAction}</div>
+      </div>
+
+      <div class="result-section">
+        <div class="result-section-label">Risk reasoning</div>
+        <div style="font-size:13.5px;color:var(--text-secondary);line-height:1.6">${riskReason}</div>
+      </div>
+
+      <div class="result-section">
+        <div class="result-section-label">Red flags to watch</div>
+        <div class="flags-row">${redFlagsArr.map(f => `<span class="flag-chip">⚠ ${escapeHtml(f)}</span>`).join('')}</div>
+      </div>
+
+      <div class="recommendation-box">${recommendation}</div>
+
+      <div class="result-actions">
+        ${rl === 'high' ? `<button class="btn btn-danger" onclick="callEmergency()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81 19.79 19.79 0 0114 1.18 2 2 0 0116 3.18v3a2 2 0 01-1.5 1.94l-1.5.38a.75.75 0 00-.5.75v.5c0 .25.1.5.3.68l.9.9a.75.75 0 010 1.06l-2.12 2.12a.75.75 0 01-1.06 0l-.9-.9a.75.75 0 00-.68-.3h-.5c-.3 0-.57.2-.69.5l-.38 1.5A2 2 0 018.82 18H5.08"/></svg>
+          Call 108 Emergency
+        </button>` : ''}
+        <button class="btn btn-outline-green" onclick="goFindHospitals()">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9,22 9,12 15,12 15,22"/></svg>
+          Find nearby hospitals
+        </button>
+      </div>
+
+      <div style="font-size:11px;color:var(--text-tertiary);text-align:center;margin-top:1rem;line-height:1.5">
+        ⚕ Rule-based triage guide only — not a diagnosis. Always consult a qualified medical professional for diagnosis and treatment.
+      </div>
+    </div>`;
+}
+
+function renderEmergencyResult() {
+  const res = document.getElementById('symptom-result');
+  res.innerHTML = `
+    <div class="result-block">
+      <div class="result-header">
+        <div class="result-title">Analysis result</div>
+        <span class="badge badge-high">🔴 HIGH RISK</span>
+      </div>
+      <div class="action-banner high">
+        <div class="action-banner-label">⚡ Immediate action</div>
+        <div class="action-banner-text">This sounds like a medical emergency. Call 108 right now or get to the nearest emergency room immediately.</div>
+      </div>
+      <div class="result-actions">
+        <button class="btn btn-danger" onclick="callEmergency()">Call 108 Emergency</button>
+        <button class="btn btn-outline-green" onclick="goFindHospitals()">Find nearby hospitals</button>
+      </div>
+    </div>`;
+}
+
+function renderMentalHealthSupport() {
+  const res = document.getElementById('symptom-result');
+  res.innerHTML = `
+    <div class="result-block">
+      <div class="result-header"><div class="result-title">You're not alone</div></div>
+      <div class="info-banner" style="margin-bottom:1rem">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+        What you're going through matters. Please reach out to someone right now — a trained counselor can help.
+      </div>
+      <div class="recommendation-box" style="margin-bottom:1rem;line-height:1.8">
+        <strong>Kiran Mental Health Helpline (India):</strong> 1800-599-0019 (24/7, toll-free)<br>
+        <strong>iCall:</strong> 9152987821<br>
+        If you are in immediate danger, call <strong>108</strong> or go to the nearest emergency room.
+      </div>
+      <div class="result-actions">
+        <button class="btn btn-danger" onclick="callEmergency()">Call 108 Emergency</button>
+      </div>
+    </div>`;
+}
+
+function renderNoMatch(raw) {
+  const res = document.getElementById('symptom-result');
+  res.innerHTML = `
+    <div class="info-banner">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      We couldn't match "${escapeHtml(raw)}" to a known symptom pattern. Try simpler terms (e.g. "fever", "headache", "stomach pain") or tap a suggestion pill above.
+    </div>`;
+}
+
+function callEmergency() {
+  if (confirm('This will call 108 (India Emergency Services). Proceed?')) window.location.href = 'tel:108';
+}
+
+/* ═══════════════════════════════════════════════════
+   YOUR USUAL HOSPITAL — saved locally on this device (localStorage)
+════════════════════════════════════════════════════ */
+function getUsualHospital() {
+  try { return JSON.parse(localStorage.getItem('arogya_usual_hospital') || 'null'); }
+  catch (e) { return null; }
+}
+
+function usualHospitalFormHtml(existing) {
+  const h = existing || {};
+  return `
+    <div class="field">
+      <label>Hospital name</label>
+      <input type="text" id="usual-hosp-name" placeholder="e.g. Apollo Hospitals, Vanagaram" value="${h.name ? escapeHtml(h.name) : ''}">
+    </div>
+    <div class="field-row" style="margin-bottom:0">
+      <div class="field"><label>Area / address (optional)</label><input type="text" id="usual-hosp-address" placeholder="e.g. Vanagaram, Chennai" value="${h.address ? escapeHtml(h.address) : ''}"></div>
+      <div class="field"><label>Phone (optional)</label><input type="text" id="usual-hosp-phone" placeholder="e.g. 044-1234567" value="${h.phone ? escapeHtml(h.phone) : ''}"></div>
+    </div>
+    <div style="display:flex;gap:10px">
+      <button class="btn btn-primary" style="flex:1" onclick="saveUsualHospital()">Save hospital</button>
+      ${existing ? `<button class="btn btn-secondary" onclick="renderUsualHospital()">Cancel</button>` : ''}
+    </div>`;
+}
+
+function renderUsualHospital() {
+  const body = document.getElementById('usual-hospital-body');
+  const h = getUsualHospital();
+  if (!h) { body.innerHTML = usualHospitalFormHtml(null); return; }
+  const directionsUrl = 'https://www.google.com/maps/search/' + encodeURIComponent(h.name + (h.address ? ', ' + h.address : ''));
+  body.innerHTML = `
+    <div class="hospital-card" style="margin-bottom:0">
+      <div class="hospital-top">
+        <div class="hospital-icon-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#1A4F96" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+        </div>
+        <div class="hospital-meta">
+          <div class="hospital-name">${escapeHtml(h.name)}</div>
+          <div class="hospital-address">
+            <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            ${h.address ? escapeHtml(h.address) : 'No address saved'}
+          </div>
+          <div class="hospital-badges"><span class="badge badge-type">⭐ Your usual hospital</span></div>
+        </div>
+      </div>
+      <div class="hospital-actions">
+        ${h.phone ? `<button class="btn btn-secondary" onclick="callHospital('${h.phone.replace(/'/g, '')}')"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81 19.79 19.79 0 0114 1.18 2 2 0 0116 3.18v3a2 2 0 01-1.5 1.94l-1.5.38"/></svg>Call</button>` : ''}
+        <button class="btn btn-secondary" onclick="window.open('${directionsUrl}','_blank')"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>Directions</button>
+        <button class="btn btn-secondary" onclick="editUsualHospital()">Edit</button>
+        <button class="btn btn-secondary" onclick="removeUsualHospital()">Remove</button>
+      </div>
+    </div>`;
+}
+
+function editUsualHospital() {
+  document.getElementById('usual-hospital-body').innerHTML = usualHospitalFormHtml(getUsualHospital() || {});
+}
+
+function saveUsualHospital() {
+  const name = document.getElementById('usual-hosp-name').value.trim();
+  if (!name) { alert('Please enter a hospital name.'); return; }
+  const address = document.getElementById('usual-hosp-address').value.trim();
+  const phone = document.getElementById('usual-hosp-phone').value.trim();
+  try {
+    localStorage.setItem('arogya_usual_hospital', JSON.stringify({ name, address, phone }));
+  } catch (e) { /* storage unavailable — still re-render from current values */ }
+  renderUsualHospital();
+}
+
+function removeUsualHospital() {
+  if (!confirm('Remove your saved usual hospital?')) return;
+  try { localStorage.removeItem('arogya_usual_hospital'); } catch (e) {}
+  renderUsualHospital();
+}
+
+function saveUsualHospitalFromIndex(i) {
+  const h = (window.lastHospitalResults || [])[i];
+  if (!h) return;
+  try {
+    localStorage.setItem('arogya_usual_hospital', JSON.stringify({ name: h.name, address: h.address || '', phone: h.phone || '' }));
+  } catch (e) {}
+  renderUsualHospital();
+  alert(`Saved "${h.name}" as your usual hospital.`);
+}
+
+function goFindHospitals() {
+  switchTab('hospitals');
+  const li = document.getElementById('location-input');
+  if (!li.value.trim()) { useCurrentLocation(); } else { findHospitals(); }
+}
+
+/* ═══════════════════════════════════════════════════
+   HOSPITAL FINDER — real geocoding + real OSM facility data
+   (Nominatim for geocoding, Overpass for hospital/clinic lookup —
+   both free, public, no API key required)
+════════════════════════════════════════════════════ */
+function haversineKm(lat1, lon1, lat2, lon2) {
+  const R = 6371;
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLon = (lon2 - lon1) * Math.PI / 180;
+  const a = Math.sin(dLat / 2) ** 2 +
+            Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon / 2) ** 2;
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+}
+
+async function geocodeLocation(query) {
+  const url = `https://nominatim.openstreetmap.org/search?format=json&limit=1&q=${encodeURIComponent(query)}`;
+  const r = await fetch(url, { headers: { 'Accept-Language': 'en' } });
+  if (!r.ok) throw new Error('geocode failed');
+  const data = await r.json();
+  if (!data.length) return null;
+  return { lat: parseFloat(data[0].lat), lon: parseFloat(data[0].lon), label: data[0].display_name };
+}
+
+async function reverseGeocodeLocation(lat, lon) {
+  const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`;
+  const r = await fetch(url, { headers: { 'Accept-Language': 'en' } });
+  if (!r.ok) throw new Error('reverse geocode failed');
+  const data = await r.json();
+  return data.display_name || `${lat.toFixed(4)}, ${lon.toFixed(4)}`;
+}
+
+async function fetchNearbyFacilities(lat, lon, radiusMeters = 8000) {
+  const query = `[out:json][timeout:25];(
+    node["amenity"="hospital"](around:${radiusMeters},${lat},${lon});
+    way["amenity"="hospital"](around:${radiusMeters},${lat},${lon});
+    node["amenity"="clinic"](around:${radiusMeters},${lat},${lon});
+    way["amenity"="clinic"](around:${radiusMeters},${lat},${lon});
+  );out center tags 40;`;
+  const r = await fetch('https://overpass-api.de/api/interpreter', { method: 'POST', body: query });
+  if (!r.ok) throw new Error('overpass failed');
+  const data = await r.json();
+  return data.elements || [];
+}
+
+function elementToHospital(el, lat, lon) {
+  const tags = el.tags || {};
+  const elat = el.lat ?? el.center?.lat;
+  const elon = el.lon ?? el.center?.lon;
+  const distanceKm = (elat != null && elon != null) ? haversineKm(lat, lon, elat, elon) : null;
+  const addrParts = [tags['addr:housenumber'], tags['addr:street'], tags['addr:suburb'] || tags['addr:neighbourhood'], tags['addr:city']].filter(Boolean);
+  return {
+    name: tags.name || tags['name:en'] || null,
+    address: addrParts.length ? addrParts.join(', ') : (tags['addr:full'] || null),
+    distanceKm,
+    distance: distanceKm != null ? (distanceKm < 1 ? Math.round(distanceKm * 1000) + ' m' : distanceKm.toFixed(1) + ' km') : null,
+    type: tags.amenity === 'clinic' ? 'Clinic' : (tags.operator_type === 'government' || /govt|government/i.test(tags.operator || '') ? 'Government' : 'Hospital'),
+    phone: tags.phone || tags['contact:phone'] || null,
+    emergency: tags.emergency === 'yes',
+    beds: tags.beds ? parseInt(tags.beds, 10) : null,
+    speciality: tags['healthcare:speciality'] || null,
+    lat: elat, lon: elon,
+  };
+}
+
+function dedupeAndRank(elements, lat, lon) {
+  const seen = new Set();
+  return elements
+    .map(el => elementToHospital(el, lat, lon))
+    .filter(h => h.name && !seen.has(h.name) && seen.add(h.name))
+    .sort((a, b) => (a.distanceKm ?? 999) - (b.distanceKm ?? 999))
+    .slice(0, 8);
+}
+
+async function useCurrentLocation() {
+  if (!navigator.geolocation) {
+    alert('Your browser doesn\'t support location access. Please type your location instead.');
+    return;
+  }
+  const res = document.getElementById('hospital-result');
+  res.innerHTML = `<div class="loading-state"><div class="spinner"></div><div class="loading-text">Getting your location…</div><div class="loading-sub">Your browser will ask for permission</div></div>`;
+
+  navigator.geolocation.getCurrentPosition(async (pos) => {
+    const { latitude, longitude } = pos.coords;
+    let label = `${latitude.toFixed(4)}, ${longitude.toFixed(4)}`;
+    try { label = await reverseGeocodeLocation(latitude, longitude); } catch (e) { /* keep coord label */ }
+    document.getElementById('location-input').value = label;
+    await searchAndRender(latitude, longitude, label);
+  }, (err) => {
+    res.innerHTML = `<div class="info-banner" style="background:var(--red-100);border-color:#FECACA;color:#7F1D1D"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>Couldn't get your location (${escapeHtml(err.message)}). Please type it manually above and search.</div>`;
+  }, { enableHighAccuracy: true, timeout: 10000 });
+}
+
+async function findHospitals() {
+  const loc = document.getElementById('location-input').value.trim();
+  if (!loc) { alert('Please enter a location.'); return; }
+
+  const res = document.getElementById('hospital-result');
+  res.innerHTML = `<div class="loading-state"><div class="spinner"></div><div class="loading-text">Locating "${escapeHtml(loc)}"…</div><div class="loading-sub">Finding real hospitals and clinics nearby</div></div>`;
+
+  try {
+    let geo = await geocodeLocation(loc);
+    if (!geo) geo = await geocodeLocation(loc + ', India');
+    if (!geo) { renderNoLocationFound(loc); return; }
+    await searchAndRender(geo.lat, geo.lon, geo.label, loc);
+  } catch (e) {
+    renderFetchError(loc);
+  }
+}
+
+async function searchAndRender(lat, lon, label, typedLoc) {
+  const res = document.getElementById('hospital-result');
+  res.innerHTML = `<div class="loading-state"><div class="spinner"></div><div class="loading-text">Searching near ${escapeHtml(typedLoc || label)}…</div><div class="loading-sub">Pulling live hospital data from OpenStreetMap</div></div>`;
+  try {
+    const elements = await fetchNearbyFacilities(lat, lon);
+    let hospitals = dedupeAndRank(elements, lat, lon);
+    if (!hospitals.length) { renderNoResults(label); return; }
+    renderHospitals(hospitals, label, { lat, lon });
+  } catch (e) {
+    renderFetchError(label);
+  }
+}
+
+function renderNoLocationFound(loc) {
+  document.getElementById('hospital-result').innerHTML = `
+    <div class="info-banner" style="background:var(--amber-100);border-color:#FDE68A;color:#78350F">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      Couldn't find "${escapeHtml(loc)}" on the map. Try adding your city or state (e.g. "Anna Nagar, Chennai") or use "Use my location".
+    </div>`;
+}
+
+function renderNoResults(loc) {
+  const mapUrl = 'https://www.google.com/maps/search/' + encodeURIComponent('hospitals near ' + loc);
+  document.getElementById('hospital-result').innerHTML = `
+    <div class="empty-state">
+      <div class="empty-icon"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9,22 9,12 15,12 15,22"/></svg></div>
+      <div class="empty-title">No mapped hospitals found nearby</div>
+      <div class="empty-sub">OpenStreetMap doesn't have facility data tagged for this exact area yet.</div>
+      <a href="${mapUrl}" target="_blank" rel="noopener" class="btn btn-secondary" style="margin-top:1rem;display:inline-flex">Search on Google Maps instead</a>
+    </div>`;
+}
+
+function renderFetchError(loc) {
+  document.getElementById('hospital-result').innerHTML = `
+    <div class="info-banner" style="background:var(--red-100);border-color:#FECACA;color:#7F1D1D">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      Couldn't reach the map data service right now. Check your connection and try again, or open
+      <a href="https://www.google.com/maps/search/${encodeURIComponent('hospitals near ' + (loc || ''))}" target="_blank" rel="noopener" style="color:#7F1D1D;font-weight:600">Google Maps directly</a>.
+    </div>`;
+}
+
+function renderHospitals(hospitals, loc, coords) {
+  window.lastHospitalResults = hospitals;
+  const res = document.getElementById('hospital-result');
+  const mapUrl = coords
+    ? `https://www.google.com/maps/search/hospitals/@${coords.lat},${coords.lon},14z`
+    : 'https://www.google.com/maps/search/' + encodeURIComponent('hospitals near ' + loc);
+  res.innerHTML = `
+    <div class="results-label">
+      <span>${hospitals.length} facilit${hospitals.length !== 1 ? 'ies' : 'y'} found near ${escapeHtml(loc)}</span>
+      <a href="${mapUrl}" target="_blank" rel="noopener" style="color:var(--blue-500);font-size:11px;font-weight:600;text-decoration:none">View on Maps →</a>
+    </div>
+    <div class="map-placeholder" onclick="window.open('${mapUrl}','_blank')">
+      <div class="map-icon">🗺️</div>
+      <div class="map-label">Open in Google Maps</div>
+      <div class="map-sub">Tap to view this area on the map</div>
+    </div>
+    ${hospitals.map((h, idx) => {
+      const directionsUrl = h.lat != null ? `https://www.google.com/maps/dir/?api=1&destination=${h.lat},${h.lon}` : mapUrl;
+      return `
+      <div class="hospital-card">
+        <div class="hospital-top">
+          <div class="hospital-icon-wrap">
+            <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M12 8v8M8 12h8"/></svg>
+          </div>
+          <div class="hospital-meta">
+            <div class="hospital-name">${escapeHtml(h.name)}</div>
+            <div class="hospital-address">
+              <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              ${h.address ? escapeHtml(h.address) : 'Exact address not mapped'}${h.distance ? ' · ' + h.distance : ''}
+            </div>
+            <div class="hospital-badges">
+              ${h.emergency ? '<span class="badge badge-emergency">🚨 Emergency</span>' : ''}
+              <span class="badge badge-type">${h.type}</span>
+              ${h.beds ? `<span class="badge badge-neutral">${h.beds} beds</span>` : ''}
+              ${h.speciality ? `<span class="badge badge-neutral">${escapeHtml(h.speciality)}</span>` : ''}
+            </div>
+          </div>
+        </div>
+        <div class="hospital-actions">
+          ${h.phone ? `<button class="btn btn-secondary" onclick="callHospital('${h.phone.replace(/'/g,'')}')"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81 19.79 19.79 0 0114 1.18 2 2 0 0116 3.18v3a2 2 0 01-1.5 1.94l-1.5.38"/></svg>${h.phone}</button>` : ''}
+          <button class="btn btn-secondary" onclick="window.open('${directionsUrl}','_blank')"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>Directions</button>
+          <button class="btn btn-secondary" onclick="bookAppt('${h.name.replace(/'/g,'')}')">Note for visit</button>
+          <button class="btn btn-secondary" onclick="saveUsualHospitalFromIndex(${idx})">⭐ Set as usual</button>
+        </div>
+      </div>`;
+    }).join('')}
+    <div style="font-size:11.5px;color:var(--text-tertiary);text-align:center;margin-top:1.25rem;line-height:1.5;padding:0 1rem">
+      Facility data from OpenStreetMap. Doctor-level availability isn't in this dataset — call ahead to confirm specialists and timings.
+    </div>`;
+}
+
+function callHospital(phone) {
+  if (confirm('Call ' + phone + '?')) window.location.href = 'tel:' + phone.replace(/\s/g, '');
+}
+
+function bookAppt(hosp) {
+  switchTab('symptom');
+  document.getElementById('symptom-input').value = '';
+  setTimeout(() => {
+    const el = document.getElementById('symptom-result');
+    el.innerHTML = `<div class="info-banner"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>Planning a visit to <strong>${escapeHtml(hosp)}</strong> — describe your symptoms above and click Analyze to prepare your consultation notes.</div>`;
+    document.getElementById('symptom-input').focus();
+  }, 100);
+}
+
+/* ═══════════════════════════════════════════════════
+   AI DOCTOR CHAT
+════════════════════════════════════════════════════ */
+const CHAT_SYSTEM_PROMPT = `You are "Arogya AI Doctor", a warm, careful AI health assistant inside the Arogya AI app (used mainly by people in Tamil Nadu, India). You are NOT a licensed physician and cannot diagnose. Your job:
+- Listen to the person's symptoms/questions and respond like a thoughtful, knowledgeable clinician would in a brief consult — clear, plain language, no unnecessary jargon.
+- Ask at most one or two clarifying questions at a time when it would meaningfully change your guidance (duration, severity, age, existing conditions, medications).
+- Give practical, general self-care guidance for mild/common issues (hydration, rest, OTC options framed generally, when to escalate).
+- Always be explicit when something could be serious and recommend seeing a doctor or visiting a hospital/ER, especially for chest pain, difficulty breathing, severe bleeding, stroke signs, suicidal thoughts, high fever in infants, or anything resembling a medical emergency. For emergencies in India, mention calling 108.
+- Never present yourself as a replacement for an in-person medical diagnosis. Keep a caring, reassuring, non-alarmist tone.
+- Keep replies concise — usually 3-7 short sentences or a tight bulleted list. Avoid long essays.
+- Do not provide specific drug dosing instructions; speak generally (e.g. "an over-the-counter pain reliever as directed on the label") and recommend confirming with a pharmacist or doctor.
+- If asked something unrelated to health, gently redirect back to how you can help with their health/symptoms.`;
+
+let chatHistory = []; // {role: 'user'|'assistant', content: string}
+let chatInFlight = false;
+
+const CHAT_SUGGESTIONS = [
+  "I have a headache and mild fever",
+  "What should I do for a sore throat?",
+  "Is it normal to feel dizzy after skipping meals?",
+  "How much water should I drink daily?"
+];
+
+function initChat() {
+  renderChatSuggestions();
+  renderChatLog();
+}
+
+function renderChatSuggestions() {
+  const wrap = document.getElementById('chat-suggestions');
+  if (chatHistory.length > 0) { wrap.innerHTML = ''; return; }
+  wrap.innerHTML = CHAT_SUGGESTIONS.map(s =>
+    `<span class="pill" onclick="useChatSuggestion(this)">${escapeHtml(s)}</span>`
+  ).join('');
+}
+
+function useChatSuggestion(el) {
+  document.getElementById('chat-input').value = el.textContent;
+  sendChatMessage();
+}
+
+function autoGrowChatInput(el) {
+  el.style.height = 'auto';
+  el.style.height = Math.min(el.scrollHeight, 110) + 'px';
+}
+
+function handleChatKeydown(e) {
+  if (e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    sendChatMessage();
+  }
+}
+
+function chatBubbleHtml(role, text, isError) {
+  const initials = role === 'user' ? 'You' : null;
+  const avatar = role === 'user'
+    ? `<div class="chat-bubble-avatar">${initials}</div>`
+    : `<div class="chat-bubble-avatar"><svg viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg></div>`;
+  return `<div class="chat-row ${role === 'user' ? 'user' : 'bot'}">
+      ${avatar}
+      <div class="chat-bubble${isError ? ' error' : ''}">${formatChatText(text)}</div>
+    </div>`;
+}
+
+function formatChatText(text) {
+  // escape first, then allow simple **bold** markdown from the model
+  let safe = escapeHtml(text);
+  safe = safe.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+  return safe;
+}
+
+function renderChatLog() {
+  const log = document.getElementById('chat-log');
+  if (!chatHistory.length) {
+    log.innerHTML = `
+      <div class="chat-row bot">
+        <div class="chat-bubble-avatar"><svg viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg></div>
+        <div class="chat-bubble">Hi, I'm your AI Doctor assistant 👋 Tell me what's bothering you — symptoms, how long it's been going on, or any health question — and I'll do my best to help. For emergencies, please call <strong>108</strong> right away instead of chatting here.</div>
+      </div>`;
+    return;
+  }
+  log.innerHTML = chatHistory.map(m => chatBubbleHtml(m.role, m.content, m.isError)).join('');
+  log.scrollTop = log.scrollHeight;
+}
+
+function appendTypingIndicator() {
+  const log = document.getElementById('chat-log');
+  const row = document.createElement('div');
+  row.className = 'chat-row bot';
+  row.id = 'chat-typing-row';
+  row.innerHTML = `<div class="chat-bubble-avatar"><svg viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg></div>
+    <div class="chat-bubble"><div class="chat-typing"><span></span><span></span><span></span></div></div>`;
+  log.appendChild(row);
+  log.scrollTop = log.scrollHeight;
+}
+
+function removeTypingIndicator() {
+  const row = document.getElementById('chat-typing-row');
+  if (row) row.remove();
+}
+
+async function sendChatMessage() {
+  if (chatInFlight) return;
+  const input = document.getElementById('chat-input');
+  const text = input.value.trim();
+  if (!text) return;
+
+  chatHistory.push({ role: 'user', content: text });
+  input.value = '';
+  input.style.height = 'auto';
+  renderChatSuggestions();
+  renderChatLog();
+
+  chatInFlight = true;
+  document.getElementById('chat-send-btn').disabled = true;
+  appendTypingIndicator();
+
+  try {
+    const reply = await callAiDoctor(chatHistory);
+    removeTypingIndicator();
+    chatHistory.push({ role: 'assistant', content: reply });
+    renderChatLog();
+  } catch (e) {
+    removeTypingIndicator();
+    chatHistory.push({
+      role: 'assistant',
+      content: "I couldn't reach the AI service just now (" + (e && e.message ? e.message : 'connection issue') + "). Please check your connection and try again — and if this is urgent, don't wait, call 108 or head to the nearest hospital.",
+      isError: true
+    });
+    renderChatLog();
+  } finally {
+    chatInFlight = false;
+    document.getElementById('chat-send-btn').disabled = false;
+    input.focus();
+  }
+}
+
+async function callAiDoctor(history) {
+  const messages = history
+    .filter(m => !m.isError)
+    .map(m => ({ role: m.role, content: m.content }));
+
+  const response = await fetch('/api/chat', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      model: 'claude-sonnet-4-6',
+      max_tokens: 1000,
+      system: CHAT_SYSTEM_PROMPT,
+      messages: messages
+    })
+  });
+
+  if (!response.ok) {
+    throw new Error('Service responded with status ' + response.status);
+  }
+  const data = await response.json();
+  const textBlocks = (data.content || []).filter(b => b.type === 'text').map(b => b.text);
+  const reply = textBlocks.join('\n').trim();
+  if (!reply) throw new Error('Empty response');
+  return reply;
+}
+
+function clearChat() {
+  if (chatHistory.length && !confirm('Clear this conversation?')) return;
+  chatHistory = [];
+  renderChatSuggestions();
+  renderChatLog();
+}
+
+initChat();
+
+</script>
+</body>
+</html>
